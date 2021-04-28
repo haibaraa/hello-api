@@ -1,3 +1,3 @@
 # hello-api
-GET /hello
-POST /hello
+- GET /hello
+- POST /hello
