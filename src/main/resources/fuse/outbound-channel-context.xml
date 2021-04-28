@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+    <import resource="beans.xml"/>
+    <camelContext id="hello-api-outbound" trace="false"
+                  useMDCLogging="true" xmlns="http://camel.apache.org/schema/spring">
+        <!-- ====================route==================== -->
+        <onException>
+            <exception>java.lang.Exception</exception>
+            <handled>
+                <constant>true</constant>
+            </handled>
+            <to uri="direct-vm:errorHandler"/>
+        </onException>
+
+        <route id="_hello-api-outbound">
+            <from id="_from_hello-api-outbound" uri="direct-vm:_outbound_hello-api"/>
+            <choice>
+                <when>
+                    <simple>'{{body.loggingLevel}}' == 'INFO'</simple>
+                    <log id="_log0_hello-api-outbound" loggingLevel="INFO" message="==outbound body: [${body}]"/>
+                </when>
+                <otherwise>
+                    <log id="_log0_hello-api-outbound" loggingLevel="DEBUG" message="==outbound body: [${body}]"/>
+                </otherwise>
+            </choice>
+			<!-- Add your outbound endpoint here -->
+<!--            <to id="_to0_hello-api-outbound" uri=""/>-->
+            <log id="_log1_hello-api-outbound" message="==outbound response headers: ${headers}"/>
+        </route>
+
+    </camelContext>
+</beans>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+    <import resource="beans.xml"/>
+    <camelContext id="hello-api" trace="false" useMDCLogging="true"
+                  xmlns="http://camel.apache.org/schema/spring">
+        <!-- ====================route==================== -->
+        <onException>
+            <exception>java.lang.Exception</exception>
+            <handled>
+                <constant>true</constant>
+            </handled>
+            <to uri="direct-vm:errorHandler"/>
+        </onException>
+
+        <interceptFrom>
+            <log id="_log0_intercept" loggingLevel="INFO" message="Inbound header: ${headers}"/>
+            <log id="_log1_intercept" loggingLevel="INFO" message="Inbound body: ${body}"/>
+        </interceptFrom>
+
+        <route id="_get-hello-route">
+            <!-- Add your inbound endpoint here -->
+            <from id="_from_get-hello" uri="direct-vm:_get-hello"/>
+            <setBody>
+                <constant>Hello World!</constant>
+            </setBody>
+            <log id="_log0_get-hello" loggingLevel="INFO" message="API response body: ${body}"/>
+        </route>
+
+        <route id="_post-hello-route">
+            <!-- Add your inbound endpoint here -->
+            <from id="_from_post-hello" uri="direct-vm:_post-hello"/>
+            <setBody>
+                <simple>Hello ${body}!</simple>
+            </setBody>
+            <log id="_log0_post-hello" loggingLevel="INFO" message="API response body: ${body}"/>
+        </route>
+
+    </camelContext>
+</beans>

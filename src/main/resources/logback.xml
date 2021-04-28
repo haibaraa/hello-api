@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<configuration>
+	<property resource="application.properties" />
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<!-- <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+			<providers>
+				<timestamp />
+				<pattern>
+					<pattern>
+						{
+							"hostname":"${HOSTNAME}",
+							"thread":"%thread",
+							"logLevel":"%level",
+							"projectName":"${project.name}",
+							"camelRouteId":"%X{camel.routeId}",
+							"subComponent":"%logger",
+							"clientAppAddr":"%X{ipClientAppAddr}",
+							"issueTime":"%X{ipIssueTime}",
+							"clientAppOrgId":"%X{ipOrgId}",
+							"clientAppId":"%X{ipClientApp}",
+							"channelId":"%X{ipChannelId}",
+							"priority":"%X{ipPriority}",
+							"async":"%X{ipAsync}",
+							"callbackUrl":"%X{ipCallbackUrl}",
+							"svcTarget":"%X{ipBackendSvc}",
+							"backendAppId":"%X{ipBackendApp}",
+							"serviceUrl":"%X{ipBackendSvcUri}",
+							"transId":"%X{ipTransId}",
+							"controlHeaderVersion":"%X{ipVersion}",
+							"content":"%msg%n%ex{full}"
+						}
+					</pattern>
+				</pattern>
+			</providers>
+		</encoder> -->
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{30} %X{camel.routeId} - %msg%n%ex{full}</pattern>
+		</encoder>
+
+	</appender>
+
+    <appender name="ROLLING_FILE"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>%d{yyyy-MM-dd}.log</FileNamePattern>
+            <MaxHistory>2</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+    </appender>
+	<!--suppress ocp pod health check info log-->
+	<logger level="error" name="org.apache.activemq.broker.BrokerService" />
+	<logger level="error" name="org.apache.activemq.broker.TransportConnector" />
+	<logger level="error" name="org.apache.activemq.transport.AbstractInactivityMonitor" />
+	<!--suppress ocp pod health check debug log-->
+	<logger level="info" name="org.apache.camel.spring.SpringCamelContext" />
+	<logger level="info" name="org.springframework.web.servlet.DispatcherServlet" />
+	<logger level="info" name="org.springframework.boot.actuate.endpoint.mvc.EndpointHandlerMapping" />
+	<logger level="info" name="org.apache.camel.impl.health.AbstractHealthCheck" />
+	<logger level="info" name="org.apache.activemq.broker.region.AbstractRegion" />
+	<logger level="info" name="org.apache.activemq.thread.TaskRunnerFactory" />
+	<logger level="info" name="org.apache.activemq.transport.vm.VMTransportFactory" />
+	<logger level="info" name="org.apache.activemq.broker.TransportConnection" />
+	<logger level="info" name="org.apache.activemq.broker.jmx.ManagementContext" />
+	<logger level="info" name="org.apache.activemq.util.ThreadPoolUtils" />
+	<logger level="info" name="org.springframework.beans.factory.support.DefaultListableBeanFactory" />
+	<logger level="info" name="org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor" />
+
+	<root level="info">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="ROLLING_FILE" />
+	</root>
+</configuration>

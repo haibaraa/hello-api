@@ -1,0 +1,36 @@
+spec:
+  template:
+    spec:
+      containers:
+        - name: hello-api
+          imagePullPolicy: Always
+          env:
+            - name: TZ
+              value: Asia/Shanghai
+            - name: JAVA_OPTIONS
+              value: '-Dspring.profiles.active=dev'
+            - name: LD_BIND_NOW
+              value: '1'
+          ports:
+            - containerPort: 8778
+              name: jolokia
+              protocol: TCP
+            - containerPort: 9779
+              name: promethus
+              protocol: TCP
+            - containerPort: 8080
+              protocol: TCP
+              name: http
+            - containerPort: 8081
+              protocol: TCP
+              name: management
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8081
+            initialDelaySeconds: 180
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8081
+            initialDelaySeconds: 10

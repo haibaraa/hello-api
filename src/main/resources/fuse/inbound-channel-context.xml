@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+    <import resource="beans.xml"/>
+    <camelContext id="hello-api-inbound" trace="false" useMDCLogging="true"
+                  xmlns="http://camel.apache.org/schema/spring">
+        <!-- ====================route==================== -->
+        <onException>
+            <exception>java.lang.Exception</exception>
+            <handled>
+                <constant>true</constant>
+            </handled>
+            <to uri="direct-vm:errorHandler"/>
+        </onException>
+
+        <restConfiguration component="servlet" apiContextPath="/api-doc" apiVendorExtension="true">
+            <dataFormatProperty key="prettyPrint" value="true"/>
+            <!-- setup swagger api descriptions -->
+            <apiProperty key="api.version" value="1.0.0"/>
+            <apiProperty key="api.title" value="Hello API"/>
+            <apiProperty key="api.description" value="This API specification for Hello API."/>
+        </restConfiguration>
+
+        <rest id="_hello" path="/hello">
+            <get>
+                <description>Get Hello API</description>
+                <responseMessage message="Success" code="200"/>
+                <responseMessage message="Unexpected error" code="default"/>
+                <to id="_to0_hello" uri="direct-vm:_get-hello"/>
+            </get>
+            <post>
+                <description>Post Hello API</description>
+                <responseMessage message="Success" code="200"/>
+                <responseMessage message="Unexpected error" code="default"/>
+                <to id="_to1_hello" uri="direct-vm:_post-hello"/>
+            </post>
+        </rest>
+
+        <!-- from servlet -->
+<!--        <route id="_hello-api-servlet">-->
+<!--            <from id="_from_hello-api-servlet" uri="servlet://{{listen.url}}?matchOnUriPrefix=true"/>-->
+<!--			<log id="_log0_hello-api-inbound" loggingLevel="INFO" message="==inbound header: ${headers}"/>-->
+<!--            <convertBodyTo type="java.lang.String"/>-->
+<!--            <to id="_to0_hello-api-servlet" uri="direct-vm:_inbound_hello-api"/>-->
+<!--        </route>-->
+
+    </camelContext>
+</beans>
